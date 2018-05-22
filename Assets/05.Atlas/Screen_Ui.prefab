@@ -53,9 +53,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   material: {fileID: 2100000, guid: bd580407249460741b28f66fe70e95da, type: 2}
   mSprites:
+  - name: Button
+    x: 0
+    y: 237
+    width: 256
+    height: 64
+    borderLeft: 0
+    borderRight: 0
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
   - name: JoyStick
     x: 0
-    y: 46
+    y: 302
     width: 257
     height: 210
     borderLeft: 0
