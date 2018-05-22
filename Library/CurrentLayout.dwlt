@@ -91,7 +91,7 @@ MonoBehaviour:
   m_MinSize: {x: 917, y: 442}
   m_MaxSize: {x: 22012, y: 10021}
   vertical: 0
-  controlID: 125
+  controlID: 92
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -204,8 +204,8 @@ MonoBehaviour:
     y: 0
     width: 329
     height: 987
-  m_MinSize: {x: 275, y: 50}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 277, y: 71}
+  m_MaxSize: {x: 4002, y: 4021}
   m_ActualView: {fileID: 16}
   m_Panes:
   - {fileID: 16}
@@ -257,8 +257,8 @@ MonoBehaviour:
     y: 459
     width: 1068
     height: 528
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 202, y: 221}
+  m_MaxSize: {x: 4002, y: 4021}
   m_ActualView: {fileID: 18}
   m_Panes:
   - {fileID: 18}
@@ -396,7 +396,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 9e97ffff0c9bffff6ad0ffff6cd2ffff0000000044400000
+    m_ExpandedIDs: e4fbffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -493,13 +493,13 @@ MonoBehaviour:
   m_StartGridSize: 64
   m_LastFolders: []
   m_LastFoldersGridSize: -1
-  m_LastProjectPath: "C:\\Users\\\uAE40\uBBFC\uC2B9\\Desktop\\Unity_Project\\Team_Portolio_GIt"
+  m_LastProjectPath: "C:\\Users\\\uAE40\uBBFC\uC2B9\\Desktop\\Unity_Project\\Team_Portfolio_GIt"
   m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 4a300000
     m_LastClickedID: 12362
-    m_ExpandedIDs: 
+    m_ExpandedIDs: b226000048280000e4280000e8280000ec290000382a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -527,7 +527,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: f63d0000a23e0000e43e0000e83e0000603f0000823f0000
+    m_ExpandedIDs: b226000048280000e4280000e8280000ec290000382a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -717,7 +717,7 @@ MonoBehaviour:
   m_Rotation:
     m_Target: {x: -0.06775648, y: 0.0065819863, z: -0.00044706, w: -0.9976801}
     speed: 2
-    m_Value: {x: -0.06775648, y: 0.0065819863, z: -0.00044706, w: -0.9976801}
+    m_Value: {x: -0.06775648, y: 0.0065819863, z: -0.00044706004, w: -0.9976802}
   m_Size:
     m_Target: 66.30642
     speed: 2
