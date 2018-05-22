@@ -1,4 +1,8 @@
 sceneSetups:
+<<<<<<< HEAD
 - path: Assets/01.Scene/Main_Scene.unity
+=======
+- path: Assets/01.Scene/TestScene.unity
+>>>>>>> PULL/YJH_Branch
   isLoaded: 1
   isActive: 1
