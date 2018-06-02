@@ -81,7 +81,10 @@
   <ItemGroup>
     <Compile Include="Assets\02.Script\Cannon\BulletMove.cs" />
     <Compile Include="Assets\02.Script\Cannon\CreateBullet.cs" />
+    <Compile Include="Assets\02.Script\Cannon\EnemyAI.cs" />
     <Compile Include="Assets\02.Script\Cannon\TestCannonControl.cs" />
+    <Compile Include="Assets\02.Script\Cannon\TestGrid.cs" />
+    <Compile Include="Assets\02.Script\Cannon\TestTileState.cs" />
     <Compile Include="Assets\02.Script\Sc_Camera_Action.cs" />
     <Compile Include="Assets\02.Script\Sc_Grid.cs" />
     <Compile Include="Assets\02.Script\Sc_GridManager.cs" />

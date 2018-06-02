@@ -102,6 +102,7 @@ public class Sc_GridManager : MonoBehaviour {
                     cannon.transform.position = grid.transform.position;
                     cannon.transform.rotation = Quaternion.Euler(Vector3.up * -90);
                     grid.GetComponent<Sc_Grid>().SetState(Grid_State.eEnemy_Cannon, pt);
+                    cannon.AddComponent<EnemyAI>();
                 }
                 else if ((i > enemy_tile_start.y && i <= enemy_tile_start.y+size) && (j > enemy_tile_start.x && j <= enemy_tile_start.x+size))
                 {

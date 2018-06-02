@@ -1,8 +1,4 @@
 sceneSetups:
-<<<<<<< HEAD
-- path: Assets/01.Scene/TestScene.unity
-=======
-- path: Assets/01.Scene/Main_Scene.unity
->>>>>>> KMS
+- path: Assets/01.Scene/ObjectScene.unity
   isLoaded: 1
   isActive: 1
