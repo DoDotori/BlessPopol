@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Team_Portfolio_GIt", "Team_Portfolio_GIt.csproj", "{1C97E4DB-3CEB-078F-2E0C-9CF12E5DBE62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Team_Portfolio_GIt.Editor", "Team_Portfolio_GIt.Editor.csproj", "{0AB946F3-EF6C-3489-CBBC-D00BEDE5FAE3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C97E4DB-3CEB-078F-2E0C-9CF12E5DBE62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C97E4DB-3CEB-078F-2E0C-9CF12E5DBE62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C97E4DB-3CEB-078F-2E0C-9CF12E5DBE62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C97E4DB-3CEB-078F-2E0C-9CF12E5DBE62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AB946F3-EF6C-3489-CBBC-D00BEDE5FAE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AB946F3-EF6C-3489-CBBC-D00BEDE5FAE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AB946F3-EF6C-3489-CBBC-D00BEDE5FAE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AB946F3-EF6C-3489-CBBC-D00BEDE5FAE3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
