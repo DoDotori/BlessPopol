@@ -8,7 +8,13 @@ public class Sc_Grid : MonoBehaviour {
     private bool m_isDestroy;
     private bool m_isInstallation_Enable;
 
-	public void Init()
+    private MeshRenderer mesh;
+    private void Awake()
+    {
+        mesh = this.GetComponent<MeshRenderer>();
+    }
+
+    public void Init()
     {
         switch(m_eState)
         {
@@ -58,7 +64,7 @@ public class Sc_Grid : MonoBehaviour {
     }
     private void Grid_Color(int _index, Color _color)
     {
-        this.GetComponent<MeshRenderer>().materials[_index].color = _color;
+        mesh.materials[_index].color = _color;
     }
 	
 }
