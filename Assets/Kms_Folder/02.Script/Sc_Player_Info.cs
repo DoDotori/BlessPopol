@@ -8,7 +8,7 @@ public class Sc_Player_Info : MonoBehaviour {
     public struct Have_Building
     {
         public Sc_Building Building;
-        public int Number_Of_Building;
+        public int Total_Building_Count;
     }
 
     private string m_strName;
@@ -23,8 +23,9 @@ public class Sc_Player_Info : MonoBehaviour {
     private int m_iDraw;
     private int m_iLose;
     private int m_iTotal_Record;
-    private Dictionary<Sc_Engine.Building_Kind, Have_Building> m_dicHave_Building;
-    
+    private Dictionary<int, Have_Building> m_dicHave_Building;
+    private List<Sc_Deck> m_listHave_Deck;
+    private Sc_Deck m_cCurrentDeck;
 
     public static Sc_Player_Info GetInstance
     {
@@ -44,7 +45,7 @@ public class Sc_Player_Info : MonoBehaviour {
         }
     }
 
-    private void Awake()
+    public void Init()
     {
         m_strName = string.Format("Temp_Name");
         m_iRank = 0;
@@ -59,44 +60,70 @@ public class Sc_Player_Info : MonoBehaviour {
         m_iLose = 0;
         m_iTotal_Record = 0;
 
-        m_dicHave_Building = new Dictionary<Sc_Engine.Building_Kind, Have_Building>();
+        m_dicHave_Building = new Dictionary<int, Have_Building>();
+        m_listHave_Deck = new List<Sc_Deck>();
 
-        AddBuilding(Sc_Engine.Building_Kind.eAttack_Speed, 3);
-        AddBuilding(Sc_Engine.Building_Kind.eRange, 4);
-        AddBuilding(Sc_Engine.Building_Kind.eGauge_Speed, 2);
+        AddBuilding(0,Sc_Engine.Building_Kind.eAttack_Speed, 6);
+        AddBuilding(1,Sc_Engine.Building_Kind.eRange, 8);
+        AddBuilding(2,Sc_Engine.Building_Kind.eGauge_Speed, 3);
+        AddBuilding(3, Sc_Engine.Building_Kind.eSkill1, 1);
+
+        for (int i = 0; i < 4; i++)
+        {
+            Sc_Deck deck = new Sc_Deck();
+            AddDeck(deck);
+            GetHave_Deck()[i].SetDeck_Name(string.Format("기본덱_{0}", i));
+        }
+        m_cCurrentDeck = GetHave_Deck()[0];
     }
 
-    private void AddBuilding(Sc_Engine.Building_Kind _kind, int _num)
+    private void AddBuilding(int _index, Sc_Engine.Building_Kind _kind, int _num)
     {
-        if(m_dicHave_Building.ContainsKey(_kind))
+        if(m_dicHave_Building.ContainsKey(_index))
         {
-            Add_ExistBuilding(_kind, _num);
+            Add_ExistBuilding(_index,_kind, _num);
         }
         else
         {
-            Add_NewBuilding(_kind, _num);
+            Add_NewBuilding(_index, _kind, _num);
         }
     }
 
-    private void Add_NewBuilding(Sc_Engine.Building_Kind _kind, int _num)
+    private void Add_NewBuilding(int _index,Sc_Engine.Building_Kind _kind, int _num)
     {
         Have_Building have;
-        have.Building = Sc_BuildingManager.getInstance.GetBuilding()[_kind];
-        have.Number_Of_Building = _num;
+        have.Building = Sc_BuildingManager.GetInstance.GetBuilding()[_kind];
+        have.Total_Building_Count = _num;
 
-        m_dicHave_Building.Add(_kind, have);
+        m_dicHave_Building.Add(_index, have);
     }
-    private void Add_ExistBuilding(Sc_Engine.Building_Kind _kind,int num)
+    private void Add_ExistBuilding(int _index,Sc_Engine.Building_Kind _kind,int num)
     {
         Have_Building have;
-        have.Building = m_dicHave_Building[Sc_Engine.Building_Kind.eAttack_Speed].Building;
-        have.Number_Of_Building = m_dicHave_Building[Sc_Engine.Building_Kind.eAttack_Speed].Number_Of_Building + num;
+        have.Building = m_dicHave_Building[_index].Building;
+        have.Total_Building_Count = m_dicHave_Building[_index].Total_Building_Count + num;
 
-        m_dicHave_Building[Sc_Engine.Building_Kind.eAttack_Speed] = have;
+        m_dicHave_Building[_index] = have;
+    }
+    private void AddDeck(Sc_Deck _deck)
+    {
+        m_listHave_Deck.Add(_deck);
     }
 
-    public Dictionary<Sc_Engine.Building_Kind, Have_Building> GetHave_Building()
+    public Dictionary<int, Have_Building> GetHave_Building()
     {
         return m_dicHave_Building;
+    }
+    public List<Sc_Deck> GetHave_Deck()
+    {
+        return m_listHave_Deck;
+    }
+    public Sc_Deck GetCurrentDeck()
+    {
+        return m_cCurrentDeck;
+    }
+    public void SetCurrentDeck(int _index)
+    {
+        m_cCurrentDeck = m_listHave_Deck[_index];
     }
 }

@@ -211,8 +211,8 @@ public class UILabel : UIWidget
 				RemoveFromPanel();
 				mTrueTypeFont = value;
 				shouldBeProcessed = true;
-				mFont = null;
-				SetActiveFont(value);
+                mFont = null;
+                SetActiveFont(value);
 				ProcessAndRequest();
 				if (mActiveTTF != null)
 					base.MarkAsChanged();

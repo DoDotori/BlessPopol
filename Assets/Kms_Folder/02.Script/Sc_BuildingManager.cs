@@ -7,7 +7,7 @@ public class Sc_BuildingManager : MonoBehaviour {
 
     private Dictionary<Sc_Engine.Building_Kind, Sc_Building> m_dicBuilding;
 
-    public static Sc_BuildingManager getInstance
+    public static Sc_BuildingManager GetInstance
     {
         get
         {
@@ -26,7 +26,7 @@ public class Sc_BuildingManager : MonoBehaviour {
         }
     }
 
-    private void Awake()
+    public void Init()
     {
         m_dicBuilding = new Dictionary<Sc_Engine.Building_Kind, Sc_Building>();
 

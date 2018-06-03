@@ -105,9 +105,35 @@ MonoBehaviour:
     paddingRight: 14
     paddingTop: 13
     paddingBottom: 17
-  - name: Frame-Bronze Circle (Metal)
+  - name: Frame_Copper_Square
     x: 401
     y: 768
+    width: 256
+    height: 256
+    borderLeft: 20
+    borderRight: 20
+    borderTop: 0
+    borderBottom: 0
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Frame_Gold_Square
+    x: 401
+    y: 511
+    width: 256
+    height: 256
+    borderLeft: 20
+    borderRight: 20
+    borderTop: 10
+    borderBottom: 10
+    paddingLeft: 0
+    paddingRight: 0
+    paddingTop: 0
+    paddingBottom: 0
+  - name: Frame-Bronze Circle (Metal)
+    x: 401
+    y: 254
     width: 256
     height: 256
     borderLeft: 0
@@ -123,36 +149,23 @@ MonoBehaviour:
     y: 768
     width: 256
     height: 256
-    borderLeft: 0
-    borderRight: 0
-    borderTop: 0
-    borderBottom: 0
+    borderLeft: 20
+    borderRight: 20
+    borderTop: 20
+    borderBottom: 20
     paddingLeft: 0
     paddingRight: 0
     paddingTop: 0
     paddingBottom: 0
   - name: Frame-copper-circle- (metal)
-    x: 1172
-    y: 768
+    x: 658
+    y: 511
     width: 256
     height: 256
     borderLeft: 0
     borderRight: 0
     borderTop: 0
     borderBottom: 0
-    paddingLeft: 0
-    paddingRight: 0
-    paddingTop: 0
-    paddingBottom: 0
-  - name: Frame-copper-square- (metal)
-    x: 915
-    y: 768
-    width: 256
-    height: 256
-    borderLeft: 20
-    borderRight: 20
-    borderTop: 10
-    borderBottom: 10
     paddingLeft: 0
     paddingRight: 0
     paddingTop: 0
@@ -170,22 +183,9 @@ MonoBehaviour:
     paddingRight: 0
     paddingTop: 0
     paddingBottom: 0
-  - name: Frame-gold-square- (metal)
-    x: 915
-    y: 511
-    width: 256
-    height: 256
-    borderLeft: 20
-    borderRight: 20
-    borderTop: 20
-    borderBottom: 20
-    paddingLeft: 0
-    paddingRight: 0
-    paddingTop: 0
-    paddingBottom: 0
   - name: Frame-stone-circle- (stone)
     x: 915
-    y: 254
+    y: 768
     width: 256
     height: 256
     borderLeft: 0
@@ -197,7 +197,7 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: Frame-stone-square- (stone)
-    x: 401
+    x: 915
     y: 511
     width: 256
     height: 256
@@ -210,7 +210,7 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: Frame-tree-circle- (tree)
-    x: 401
+    x: 915
     y: 254
     width: 256
     height: 256
@@ -223,8 +223,8 @@ MonoBehaviour:
     paddingTop: 0
     paddingBottom: 0
   - name: Frame-tree-square- (wood)
-    x: 658
-    y: 511
+    x: 1172
+    y: 768
     width: 256
     height: 256
     borderLeft: 0

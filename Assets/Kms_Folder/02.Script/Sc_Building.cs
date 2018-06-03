@@ -33,7 +33,7 @@ public class Sc_Building : MonoBehaviour {
         m_eBuilding_Kind = Sc_Engine.Building_Kind.eNull;
     }
 
-    public Sc_Engine.POINT GetCoordinate    { get { return m_ptCoordinate; } }
+    public Sc_Engine.POINT Coordinate    { get { return m_ptCoordinate; } set { m_ptCoordinate = Coordinate; } }
     public bool GetIsAlive                  { get { return m_isAlive; } }
     public bool GetIsSkill1                 { get { return m_isSkill1; } }
     public bool GetIsSkill2                 { get { return m_isSkill2; } }
