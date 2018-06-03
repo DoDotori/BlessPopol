@@ -1,8 +1,1 @@
-sceneSetups:
-<<<<<<< HEAD
-- path: Assets/01.Scene/ObjectScene.unity
-=======
-- path: Assets/Kms_Folder/01.Scene/Main_Scene.unity
->>>>>>> KMS
-  isLoaded: 1
-  isActive: 1
+sceneSetups: []
