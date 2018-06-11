@@ -6,5 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Kms_Folder/01.Scene/Loading_Scene.unity
+    guid: 1eee047f2181c514fb3823cb2144398f
+  - enabled: 1
+    path: Assets/Kms_Folder/01.Scene/Main_Scene.unity
+    guid: f208a31410958bd4ea9300ab2e0126f6
+  - enabled: 1
     path: Assets/Kms_Folder/01.Scene/ObjectScene.unity
     guid: 99c9720ab356a0642a771bea13969a05

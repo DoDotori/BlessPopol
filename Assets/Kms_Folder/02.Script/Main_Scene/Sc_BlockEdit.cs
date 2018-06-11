@@ -3,366 +3,400 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Sc_BlockEdit : MonoBehaviour {
-    public enum Block_Grid_State { eEnable, eBan, eUse }
+    public enum Block_Grid_State { eEnable, eBan, eUse}
+    public enum Sprite_Color { eOrigin, eSelect, eEnabel, eBan, eUse }
     public struct Block_Grid
     {
-        public UISprite Sprite;
+        public UISprite Grid_Sprite;
         public Block_Grid_State eBlock_Grid_State;
     }
 
-    //건물리스트
+    private readonly int m_readiGrid_Size = 5;
+    private readonly int m_readiMax_Build_Count = 5;
+    private readonly int m_readiGrid_Name_Position_CoordinateY = 16;
+    private readonly int m_readiGrid_Name_Position_CoordinateX = 17;
+    private readonly int m_readiBuilding_Name_Position_Index = 14;
+    private readonly int m_readiBlock_Name_Position_Index = 12;
+
     private UIAtlas m_ObjectAtlas;
     private UIAtlas m_ScreenAtlas;
-    private Transform m_trList_Grid;                            //건물 리스트 부모
-    private List<Sc_Building> m_listBuilding;                   //건물 리스트
-    private List<UISprite> m_listButton_Background;             //건물 리스트 배경
-    //블럭그리드
-    private Block_Grid[,] m_stBlock_Grid;                       //배치 그리드
-    private List<Sc_Building> m_listUse_Building;               //배치된 건물
-    private Transform m_trBlock_Grid;                           //배치 그리드 부모
-    private int m_iGrid_Size;                                   //그리드 크기
-    //기타
-    private UILabel m_laMaxCount;                               //블럭에 설정가능한 최대 건물개수 표시
-    private List<int> m_listBuilding_Count;                     //각 건물 개수
-    private List<int> m_listPossible_Build_Count;               //각 블럭당 설치가능 개수
-    private int m_iSelect_Block;                                //선택된 블럭
-    private int m_iSelect_Building_Count;                       //선택된 건물의 개수
-    private int m_iCurrent_Select_Building;                     //현재 선택된 건물
-    private int m_iPrev_Select_Building;                        //이전에 선택된 건물
-    private readonly int m_iPossible_Max_Bulid_Count = 5;       //최대 설치가능한 건물개수
-    private Color m_Select_Color;                               //선택시 색
-    private Color m_Origin_Color;                               //원래 색
-    private Color m_Ban_Color;                                  //설치금지 색
-    private Color m_Use_Color;                                  //설치된 색
 
-    public void Init() {
+    //블럭 관련
+    private int m_iCurrent_Block_Index;
+    private int m_iPrev_Block_Index;
+    private GameObject m_objSelect_Block_Mark;
+
+    //건물 관련
+    private Transform m_trBuilding_List_Parent;
+    private Transform[] m_trarrBuilding_Count_List;
+    private Dictionary<Sc_Engine.Building_Kind, List<Sc_Building>> m_dicHave_Building;
+    private Dictionary<Sc_Engine.Building_Kind, List<Sc_Building>> m_dicUse_Building;
+    private int m_iSelect_Building_Index;
+
+    //그리드 관련
+    private Block_Grid[,] m_starrGrid;
+    private Transform m_trGrid_Parent;
+
+    //기타
+    private Transform m_trMaxCount;
+    private int m_iEnable_Build_Count;
+    private Color[] m_Color;
+    private bool m_isSelect_Building;
+    private GameObject m_objSave_PopUp;
+    private bool m_isSave;
+
+    public void Init()
+    {
         m_ObjectAtlas = Resources.Load<UIAtlas>("Atlas/Object_Ui");
         m_ScreenAtlas = Resources.Load<UIAtlas>("Atlas/Screen_Ui");
-        m_trList_Grid = this.transform.GetChild(0).GetChild(0);
-        m_trBlock_Grid = this.transform.GetChild(1);
-        m_laMaxCount = GameObject.Find("Building_MaxCount").GetComponent<UILabel>();
-        m_listBuilding = new List<Sc_Building>();
-        m_listButton_Background = new List<UISprite>();
-        m_listBuilding_Count = new List<int>();
-        m_listPossible_Build_Count = new List<int>();
-        m_listUse_Building = new List<Sc_Building>();
-        m_iCurrent_Select_Building = 0;
-        m_iPrev_Select_Building = 0;
-        m_iSelect_Block = 0;
-        m_iGrid_Size = 5;
-        m_Select_Color = new Color(0.0f, 1.0f, 0.0f);
-        m_Origin_Color = new Color(0.8f, 0.8f, 1.0f);
-        m_Ban_Color = new Color(1.0f, 0.0f, 0.0f);
-        m_Use_Color = new Color(1.0f, 1.0f, 1.0f);
-        m_stBlock_Grid = new Block_Grid[m_iGrid_Size, m_iGrid_Size];
 
+        //블럭 관련
+        m_iCurrent_Block_Index = 0;
+        m_iPrev_Block_Index = 0;
+        m_objSelect_Block_Mark = this.transform.GetChild(4).GetChild(1).GetChild(0).GetChild(1).gameObject;
 
-        for (int i = 0; i < m_trList_Grid.childCount; i++)
+        Transform Block_List = this.transform.GetChild(4).GetChild(1);
+        for(int i=0;i<6;i++)
         {
-            m_listButton_Background.Add(m_trList_Grid.GetChild(i).GetComponent<UISprite>());
+            Transform blockName = Block_List.GetChild(i).GetChild(0);
+            Sc_Engine.GetInstance.Change_Label(blockName, string.Format("{0} 블럭", Sc_BuildingManager.GetInstance.GetBuilding()[(Sc_Engine.Building_Kind)i].GetName));
         }
 
-        for (int i = 0; i < 6; i++)
-        {
-            m_listPossible_Build_Count.Add(m_iPossible_Max_Bulid_Count);
-        }
+        //건물 관련
+        m_trBuilding_List_Parent = this.transform.GetChild(0).GetChild(0).GetChild(0);
+        m_dicHave_Building = new Dictionary<Sc_Engine.Building_Kind, List<Sc_Building>>();
+        m_dicUse_Building = new Dictionary<Sc_Engine.Building_Kind, List<Sc_Building>>();
+        m_trarrBuilding_Count_List = new Transform[Sc_Player_Info.GetInstance.GetHave_Building().Count];
+        m_iSelect_Building_Index = -1;
 
-        int z = 0;
-        for (int i = 0; i < m_iGrid_Size; i++)
+        for(int i=0;i<Sc_Player_Info.GetInstance.GetHave_Building().Count;i++)
         {
-            for (int j = 0; j < m_iGrid_Size; j++)
+            List<Sc_Building> HaveBuilding_List = new List<Sc_Building>();
+            List<Sc_Building> UseBuilding_List = new List<Sc_Building>();
+            for (int j=0;j<Sc_Player_Info.GetInstance.GetHave_Building()[(Sc_Engine.Building_Kind)i].Count;j++)
             {
-                m_stBlock_Grid[i, j].Sprite = m_trBlock_Grid.GetChild(z).GetComponent<UISprite>();
-                m_stBlock_Grid[i, j].eBlock_Grid_State = Block_Grid_State.eBan;
+                Sc_Building HaveBuilding = (Sc_Building)Sc_Player_Info.GetInstance.GetHave_Building()[(Sc_Engine.Building_Kind)i][j].Clone();
+                HaveBuilding_List.Add(HaveBuilding);
+                
+
+                Sc_Building UseBuilding = (Sc_Building)Sc_Player_Info.GetInstance.GetHave_Building()[(Sc_Engine.Building_Kind)i][j].Clone();
+                UseBuilding_List.Add(UseBuilding);
+                
+            }
+            m_dicHave_Building.Add(HaveBuilding_List[0].Building_Kind, HaveBuilding_List);
+            m_dicUse_Building.Add(UseBuilding_List[0].Building_Kind, UseBuilding_List);
+
+            m_dicUse_Building[(Sc_Engine.Building_Kind)i].Clear();
+
+            m_trarrBuilding_Count_List[i] = m_trBuilding_List_Parent.GetChild(i).GetChild(0).GetChild(3);
+            m_trBuilding_List_Parent.GetChild(i).gameObject.SetActive(true);
+            //건물 이미지
+            Sc_Engine.GetInstance.Change_Sprite(m_ObjectAtlas, m_trBuilding_List_Parent.GetChild(i).GetChild(0).GetChild(0).GetChild(0), m_dicHave_Building[(Sc_Engine.Building_Kind)i][0].GetSpriteName);
+            //건물 이름
+            Sc_Engine.GetInstance.Change_Label(m_trBuilding_List_Parent.GetChild(i).GetChild(0).GetChild(1), string.Format("{0}",m_dicHave_Building[(Sc_Engine.Building_Kind)i][0].GetName));
+            //건물 설명
+            Sc_Engine.GetInstance.Change_Label(m_trBuilding_List_Parent.GetChild(i).GetChild(0).GetChild(2), string.Format("{0}", m_dicHave_Building[(Sc_Engine.Building_Kind)i][0].GetAbility));
+            //건물 개수
+            Sc_Engine.GetInstance.Change_Label(m_trarrBuilding_Count_List[i], string.Format("x{0}", m_dicHave_Building[(Sc_Engine.Building_Kind)i].Count));
+        }
+
+        //그리드 관련
+        m_starrGrid = new Block_Grid[m_readiGrid_Size, m_readiGrid_Size];
+        m_trGrid_Parent = this.transform.Find("Block_Edit_Grid");
+        
+        int z = 0;
+        for(int i =0;i<m_readiGrid_Size;i++)
+        {
+            for(int j=0;j<m_readiGrid_Size;j++)
+            {
+                m_starrGrid[i, j].eBlock_Grid_State = Block_Grid_State.eBan;
+                m_starrGrid[i, j].Grid_Sprite = m_trGrid_Parent.GetChild(z).GetComponent<UISprite>();
                 z++;
             }
         }
-        m_laMaxCount.text = string.Format("{0}/{1}", m_listPossible_Build_Count[m_iSelect_Block], m_iPossible_Max_Bulid_Count); 
-        BuildingList_Init();
-        Change_Background_Color();
-        Grid_Temp();
+
+        //기타
+        m_trMaxCount = this.transform.GetChild(5);
+        m_iEnable_Build_Count = m_readiMax_Build_Count;
+        m_Color = new Color[5];
+        m_isSelect_Building = true;
+        m_isSave = false;
+        m_objSave_PopUp = this.transform.GetChild(this.transform.childCount - 1).gameObject;
+
+        Sc_Engine.GetInstance.Change_Label(m_trMaxCount, string.Format("Max Count : {0}", m_iEnable_Build_Count));
+        m_Color[(int)Sprite_Color.eOrigin] = new Color(0.8f, 0.8f, 1.0f);
+        m_Color[(int)Sprite_Color.eSelect] = new Color(0.0f, 1.0f, 0.0f);
+        m_Color[(int)Sprite_Color.eEnabel] = new Color(0.0f, 1.0f, 0.0f);
+        m_Color[(int)Sprite_Color.eBan] = new Color(1.0f, 0.0f, 0.0f);
+        m_Color[(int)Sprite_Color.eUse] = new Color(1.0f, 1.0f, 1.0f);
     }
 
-    public void BuildingList_Init()
+    //블럭 관련
+    public void Press_Block(GameObject _object)
     {
-        for (int i = 0; i < Sc_Player_Info.GetInstance.GetHave_Building().Count; i++)
+        m_iPrev_Block_Index = m_iCurrent_Block_Index;
+        m_iCurrent_Block_Index = int.Parse(_object.name[m_readiBlock_Name_Position_Index].ToString());
+
+        if(m_iCurrent_Block_Index != m_iPrev_Block_Index)
         {
-            Sc_Building building;
-            building = Sc_Player_Info.GetInstance.GetHave_Building()[i].Building;
-            m_listBuilding.Add(building);
+            m_objSelect_Block_Mark.transform.parent = _object.transform;
+            m_objSelect_Block_Mark.transform.localPosition = Vector3.zero;
 
-            Transform tr = m_trList_Grid.GetChild(i);
-            tr.gameObject.SetActive(true);
-
-            m_listBuilding_Count.Add(Sc_Player_Info.GetInstance.GetHave_Building()[i].Total_Building_Count);
-
-            Change_Sprite(tr, m_listBuilding[i].GetSpriteName);
-            Change_Name(tr, m_listBuilding[i].GetName);
-            Change_AbilityText(tr, m_listBuilding[i].GetAbility);
-            Change_Number(tr, m_listBuilding_Count[i]);
-        }
-
-        m_iSelect_Building_Count = m_listBuilding_Count[0];
-    }
-    //블럭그리드
-    private void Grid_Temp()
-    {
-        int z = 0;
-        for (int i = 0; i < m_iGrid_Size; i++)
-        {
-            for (int j = 0; j < m_iGrid_Size; j++)
+            if (!m_isSave)
             {
-                if (m_stBlock_Grid[i, j].eBlock_Grid_State == Block_Grid_State.eBan)
-                {
-                    z++;
-                }
-
-                if (m_stBlock_Grid[i, j].eBlock_Grid_State == Block_Grid_State.eUse)
-                {
-                    UDLR_Check(i, j);
-                }
+                m_dicUse_Building[(Sc_Engine.Building_Kind)m_iPrev_Block_Index].Clear();
             }
-        }
 
-        if (z == m_stBlock_Grid.Length)
-        {
-            m_stBlock_Grid[2, 2].eBlock_Grid_State = Block_Grid_State.eEnable;
-        }
-        Grid_Enable_Render();
-    }
-
-    private void UDLR_Check(int _i, int _j)
-    {
-        //Up
-        if (_i - 1 >= 0 && m_stBlock_Grid[_i - 1, _j].eBlock_Grid_State != Block_Grid_State.eUse)
-        {
-            m_stBlock_Grid[_i - 1, _j].eBlock_Grid_State = Block_Grid_State.eEnable;
-        }
-        //Up_Left
-        if ((_i - 1 >= 0 && _j - 1 >= 0) && m_stBlock_Grid[_i - 1, _j - 1].eBlock_Grid_State != Block_Grid_State.eUse)
-        {
-            m_stBlock_Grid[_i - 1, _j - 1].eBlock_Grid_State = Block_Grid_State.eEnable;
-        }
-        //Up_Right
-        if ((_i - 1 >= 0 && _j + 1 < m_iGrid_Size) && m_stBlock_Grid[_i - 1, _j + 1].eBlock_Grid_State != Block_Grid_State.eUse)
-        {
-            m_stBlock_Grid[_i - 1, _j + 1].eBlock_Grid_State = Block_Grid_State.eEnable;
-        }
-        //Down
-        if (_i + 1 < m_iGrid_Size && m_stBlock_Grid[_i + 1, _j].eBlock_Grid_State != Block_Grid_State.eUse)
-        {
-            m_stBlock_Grid[_i + 1, _j].eBlock_Grid_State = Block_Grid_State.eEnable;
-        }
-        //Down_Left
-        if ((_i + 1 < m_iGrid_Size && _j - 1 >= 0) && m_stBlock_Grid[_i + 1, _j - 1].eBlock_Grid_State != Block_Grid_State.eUse)
-        {
-            m_stBlock_Grid[_i + 1, _j - 1].eBlock_Grid_State = Block_Grid_State.eEnable;
-        }
-        //Down_Right
-        if ((_i + 1 < m_iGrid_Size && _j + 1 < m_iGrid_Size) && m_stBlock_Grid[_i + 1, _j + 1].eBlock_Grid_State != Block_Grid_State.eUse)
-        {
-            m_stBlock_Grid[_i + 1, _j + 1].eBlock_Grid_State = Block_Grid_State.eEnable;
-        }
-        //Left
-        if (_j - 1 >= 0 && m_stBlock_Grid[_i, _j - 1].eBlock_Grid_State != Block_Grid_State.eUse)
-        {
-            m_stBlock_Grid[_i, _j - 1].eBlock_Grid_State = Block_Grid_State.eEnable;
-        }
-        //Right
-        if (_j + 1 < m_iGrid_Size && m_stBlock_Grid[_i, _j + 1].eBlock_Grid_State != Block_Grid_State.eUse)
-        {
-            m_stBlock_Grid[_i, _j + 1].eBlock_Grid_State = Block_Grid_State.eEnable;
-        }
-    }
-
-    private void Grid_Enable_Render()
-    {
-        for (int i = 0; i < m_iGrid_Size; i++)
-        {
-            for (int j = 0; j < m_iGrid_Size; j++)
+            if(Sc_Player_Info.GetInstance.GetHave_Deck()[Sc_Player_Info.GetInstance.GetCurrentDeck_Index()].GetBlock_List()[m_iCurrent_Block_Index].GetActive())
             {
-                if (m_stBlock_Grid[i, j].eBlock_Grid_State == Block_Grid_State.eEnable)
-                {
-                    m_stBlock_Grid[i, j].Sprite.atlas = m_ScreenAtlas;
-                    m_stBlock_Grid[i, j].Sprite.spriteName = "BackGround";
-                    m_stBlock_Grid[i, j].Sprite.color = m_Select_Color;
-                }
-                else if (m_stBlock_Grid[i, j].eBlock_Grid_State == Block_Grid_State.eUse)
-                {
-                    if (m_iCurrent_Select_Building == m_iPrev_Select_Building)
-                    {
-                        m_stBlock_Grid[i, j].Sprite.color = m_Use_Color;
-                        m_stBlock_Grid[i, j].Sprite.atlas = m_ObjectAtlas;
-                        m_stBlock_Grid[i, j].Sprite.spriteName = m_listBuilding[m_iCurrent_Select_Building].GetSpriteName;
-                        m_iPrev_Select_Building = m_iCurrent_Select_Building;
-                    }
-                }
-                else if(m_stBlock_Grid[i,j].eBlock_Grid_State == Block_Grid_State.eBan)
-                {
-                    m_stBlock_Grid[i, j].Sprite.atlas = m_ScreenAtlas;
-                    m_stBlock_Grid[i, j].Sprite.spriteName = "BackGround";
-                    m_stBlock_Grid[i, j].Sprite.color = m_Ban_Color;
-                }
+                Load_Grid();
+            }
+            else
+            {
+                Grid_Init();
+            }
+            Refresh_Label();
+        }
+
+    }   
+
+    //건물 관련
+    public void Press_Building(GameObject _object)
+    {
+        if(m_isSelect_Building)
+        {
+            m_iSelect_Building_Index = int.Parse(_object.name[m_readiBuilding_Name_Position_Index].ToString());
+
+            Change_Building_Color();
+            Grid_Check();
+        }
+    }
+
+    private void Change_Building_Color()
+    {
+        for (int i = 0; i < m_dicHave_Building.Count; i++)
+        {
+            if (i == m_iSelect_Building_Index)
+            {
+                Sc_Engine.GetInstance.Change_Color(m_trBuilding_List_Parent.GetChild(i).GetComponent<UISprite>(), m_Color[(int)Sprite_Color.eSelect]);
+            }
+            else
+            {
+                Sc_Engine.GetInstance.Change_Color(m_trBuilding_List_Parent.GetChild(i).GetComponent<UISprite>(), m_Color[(int)Sprite_Color.eOrigin]);
             }
         }
     }
 
-    private void Change_Building()
+    //그리드 관련
+    private void Grid_Init()
     {
-        for(int i=0;i< m_iGrid_Size; i++)
+        for(int i=0;i<m_readiGrid_Size;i++)
         {
-            for(int j=0;j< m_iGrid_Size; j++)
+            for(int j=0;j<m_readiGrid_Size;j++)
             {
-                if (m_listPossible_Build_Count[m_iSelect_Block] < m_iPossible_Max_Bulid_Count)
+                m_starrGrid[i, j].eBlock_Grid_State = Block_Grid_State.eBan;
+            }
+        }
+        Grid_Check();
+    }
+    private void Load_Grid()
+    {
+        for (int i = 0; i < m_readiGrid_Size; i++)
+        {
+            for (int j = 0; j < m_readiGrid_Size; j++)
+            {
+                m_starrGrid[i, j].eBlock_Grid_State = Block_Grid_State.eBan;
+            }
+        }
+
+        List<Sc_Building> CurrentBlock_Building_List = new List<Sc_Building>(Sc_Player_Info.GetInstance.GetHave_Deck()[Sc_Player_Info.GetInstance.GetCurrentDeck_Index()].GetBlock_List()[m_iCurrent_Block_Index].GetBuilding_List());
+
+        for (int i=0;i< CurrentBlock_Building_List.Count;i++)
+        {
+            m_starrGrid[CurrentBlock_Building_List[i].GetCoordinate.y, CurrentBlock_Building_List[i].GetCoordinate.x].eBlock_Grid_State = Block_Grid_State.eUse;
+        }
+        Grid_Renderer();
+    }
+
+    public void Press_Grid(GameObject _object)
+    {
+        int x = int.Parse(_object.name[m_readiGrid_Name_Position_CoordinateX].ToString());
+        int y = int.Parse(_object.name[m_readiGrid_Name_Position_CoordinateY].ToString());
+
+        int have_Building_Count = m_dicHave_Building[(Sc_Engine.Building_Kind)m_iSelect_Building_Index].Count;
+        int use_Building_Count = m_dicUse_Building[(Sc_Engine.Building_Kind)m_iSelect_Building_Index].Count;
+
+        if (m_iSelect_Building_Index >= 0 && m_iSelect_Building_Index < m_dicHave_Building.Count)
+        {
+            if(m_starrGrid[y,x].eBlock_Grid_State== Block_Grid_State.eEnable)
+            {
+                if(m_iEnable_Build_Count > 0)
                 {
-                    if (m_iCurrent_Select_Building != m_iPrev_Select_Building)
+                    if(have_Building_Count - use_Building_Count >0)
                     {
-                        if (m_stBlock_Grid[i, j].eBlock_Grid_State == Block_Grid_State.eEnable)
+                        if((Sc_Engine.Building_Kind)m_iCurrent_Block_Index == m_dicHave_Building[(Sc_Engine.Building_Kind)m_iSelect_Building_Index][use_Building_Count].Building_Kind)
                         {
-                            m_stBlock_Grid[i, j].eBlock_Grid_State = Block_Grid_State.eBan;
+                            m_starrGrid[y, x].eBlock_Grid_State = Block_Grid_State.eUse;
+                            m_dicHave_Building[(Sc_Engine.Building_Kind)m_iSelect_Building_Index][use_Building_Count].SetCoordinate(x, y);
+                            Sc_Building building = (Sc_Building)m_dicHave_Building[(Sc_Engine.Building_Kind)m_iSelect_Building_Index][use_Building_Count].Clone();
+                            m_dicUse_Building[(Sc_Engine.Building_Kind)m_iSelect_Building_Index].Add(building);
+                            m_isSelect_Building = false;
+                            m_isSave = false;
+
+                            Refresh_Label();
+                            Grid_Check();
                         }
                     }
                 }
             }
         }
 
-        if (m_listPossible_Build_Count[m_iSelect_Block] == m_iPossible_Max_Bulid_Count)
-        {
-            m_iPrev_Select_Building = m_iCurrent_Select_Building;
-            m_iSelect_Building_Count = m_listBuilding_Count[m_iCurrent_Select_Building];
-        }
-
-        if (m_iCurrent_Select_Building == m_iPrev_Select_Building)
-        {
-            Grid_Temp();
-        }
-        Grid_Enable_Render();
+        
     }
 
-    public void Grid_Press(GameObject _obj)
+    private void Grid_Check()
     {
-        int i = int.Parse(_obj.name[16].ToString());
-        int j = int.Parse(_obj.name[17].ToString());
-
-        if (m_stBlock_Grid[i, j].eBlock_Grid_State == Block_Grid_State.eEnable)
+        int z = 0;
+        for(int i=0;i<m_readiGrid_Size;i++)
         {
-            if (m_listPossible_Build_Count[m_iSelect_Block] > 0)
+            for(int j=0;j<m_readiGrid_Size;j++)
             {
-                if (m_iSelect_Building_Count > 0)
+                if(m_starrGrid[i,j].eBlock_Grid_State == Block_Grid_State.eBan)
                 {
-                    m_stBlock_Grid[i, j].eBlock_Grid_State = Block_Grid_State.eUse;
-                    Grid_Temp();
-                    m_listBuilding[m_iCurrent_Select_Building].Coordinate.SetPoint(j, i);
-                    m_listUse_Building.Add(m_listBuilding[m_iCurrent_Select_Building]);
-                    m_listPossible_Build_Count[m_iSelect_Block]--;
-                    m_iSelect_Building_Count--;
+                    z++;
+                }
+                if(m_starrGrid[i,j].eBlock_Grid_State == Block_Grid_State.eUse)
+                { 
+                     Grid_UDLR_Check(j, i);
                 }
             }
-            Change_Number(m_trList_Grid.GetChild(m_iCurrent_Select_Building), m_iSelect_Building_Count);
-            m_laMaxCount.text = string.Format("{0}/{1}", m_listPossible_Build_Count[m_iSelect_Block], m_iPossible_Max_Bulid_Count);
         }
-        
+
+        if(z == m_starrGrid.Length)
+        {
+            m_starrGrid[2, 2].eBlock_Grid_State = Block_Grid_State.eEnable;
+            m_isSelect_Building = true;
+        }
+
+        Grid_Renderer();
     }
-    public void Grid_Initialization()
+    
+    private void Grid_UDLR_Check(int _x, int _y)
     {
-        for(int i=0;i< m_iGrid_Size; i++)
-        {
-            for(int j=0;j< m_iGrid_Size; j++)
-            {
-                m_stBlock_Grid[i, j].eBlock_Grid_State = Block_Grid_State.eBan;
-            }
-        }
-       /* if (Sc_Player_Info.GetInstance.GetCurrentDeck().GetBlock_List().Contains(m_cCurrentBlock))
-        {
-            Sc_Player_Info.GetInstance.GetCurrentDeck().GetBlock_List().Remove(m_cCurrentBlock);
-        }*/
-        m_listUse_Building.Clear();
-        m_listPossible_Build_Count[m_iSelect_Block] = m_iPossible_Max_Bulid_Count;
-        m_iSelect_Building_Count = m_listBuilding_Count[m_iCurrent_Select_Building];
-        m_iPrev_Select_Building = m_iCurrent_Select_Building;
-        m_laMaxCount.text = string.Format("{0}/{1}", m_listPossible_Build_Count[m_iSelect_Block], m_iPossible_Max_Bulid_Count);
         
-        
-        for (int i = 0; i < m_listBuilding.Count; i++)
+        //UP
+        if (_y - 1 >= 0 && m_starrGrid[_y - 1, _x].eBlock_Grid_State != Block_Grid_State.eUse)
         {
-            Change_Number(m_trList_Grid.GetChild(i), m_listBuilding_Count[i]);
+            m_starrGrid[_y - 1, _x].eBlock_Grid_State = Block_Grid_State.eEnable;
         }
-        Grid_Temp();
+        //DOWN
+        if (_y + 1 < m_readiGrid_Size && m_starrGrid[_y + 1, _x].eBlock_Grid_State != Block_Grid_State.eUse)
+        {
+            m_starrGrid[_y + 1, _x].eBlock_Grid_State = Block_Grid_State.eEnable;
+        }
+        //LEFT
+        if (_x - 1 >= 0 && m_starrGrid[_y, _x - 1].eBlock_Grid_State != Block_Grid_State.eUse)
+        {
+            m_starrGrid[_y, _x - 1].eBlock_Grid_State = Block_Grid_State.eEnable;
+        }
+        //RIGHT
+        if (_x + 1 < m_readiGrid_Size && m_starrGrid[_y, _x + 1].eBlock_Grid_State != Block_Grid_State.eUse)
+        {
+            m_starrGrid[_y, _x + 1].eBlock_Grid_State = Block_Grid_State.eEnable;
+        }
     }
 
-    public void Grid_Save()
+    private void Grid_Renderer()
     {
-        Sc_Deck currentDeck = Sc_Player_Info.GetInstance.GetCurrentDeck();
-        Sc_Block block = new Sc_Block();
-        if (!currentDeck.GetBlock_List().Contains(block))
+        int z = 0;
+        for (int i = 0; i < m_readiGrid_Size; i++)
         {
-            currentDeck.GetBlock_List().Add(block);
+            for (int j = 0; j < m_readiGrid_Size; j++)
+            {
+                if (m_starrGrid[i, j].eBlock_Grid_State == Block_Grid_State.eEnable)
+                {
+                    Sc_Engine.GetInstance.Change_Sprite(m_starrGrid[i, j].Grid_Sprite, m_ScreenAtlas, m_Color[(int)Sprite_Color.eEnabel], "BackGround");
+                }
+                else if (m_starrGrid[i, j].eBlock_Grid_State == Block_Grid_State.eUse)
+                {
+                    Sc_Engine.GetInstance.Change_Sprite(m_starrGrid[i, j].Grid_Sprite, m_ObjectAtlas, m_Color[(int)Sprite_Color.eUse],
+                        m_dicUse_Building[(Sc_Engine.Building_Kind)m_iCurrent_Block_Index][0].GetSpriteName);
+                    z++;  
+                }
+                else if (m_starrGrid[i, j].eBlock_Grid_State == Block_Grid_State.eBan)
+                {
+                    Sc_Engine.GetInstance.Change_Sprite(m_starrGrid[i, j].Grid_Sprite, m_ScreenAtlas, m_Color[(int)Sprite_Color.eBan], "BackGround");
+                }
+            }
+        }
+
+        if(z == m_iEnable_Build_Count)
+        {
+            for(int i=0;i<m_readiGrid_Size;i++)
+            {
+                for(int j=0;j<m_readiGrid_Size;j++)
+                {
+                    if (m_starrGrid[i, j].eBlock_Grid_State == Block_Grid_State.eEnable)
+                    {
+                        m_starrGrid[i, j].eBlock_Grid_State = Block_Grid_State.eBan;
+                        Sc_Engine.GetInstance.Change_Sprite(m_starrGrid[i, j].Grid_Sprite, m_ScreenAtlas, m_Color[(int)Sprite_Color.eBan], "BackGround");
+                    }
+                }
+            }
+        }
+    }
+
+    //기타
+    public void Button_Save()
+    {
+        if(m_dicUse_Building[(Sc_Engine.Building_Kind)m_iCurrent_Block_Index].Count != 0)
+        {
+            for (int i = 0; i < m_dicUse_Building[(Sc_Engine.Building_Kind)m_iCurrent_Block_Index].Count; i++)
+            {
+                Sc_Player_Info.GetInstance.GetHave_Deck()[Sc_Player_Info.GetInstance.GetCurrentDeck_Index()].GetBlock_List()[m_iCurrent_Block_Index].GetBuilding_List().Add(m_dicUse_Building[(Sc_Engine.Building_Kind)m_iCurrent_Block_Index][i]);
+            }
+            Sc_Player_Info.GetInstance.GetHave_Deck()[Sc_Player_Info.GetInstance.GetCurrentDeck_Index()].GetBlock_List()[m_iCurrent_Block_Index].SetActive(true);
+            m_isSave = true;
         }
         else
         {
-            currentDeck.GetBlock_List()[m_iSelect_Block] = block;
+            Sc_Player_Info.GetInstance.GetHave_Deck()[Sc_Player_Info.GetInstance.GetCurrentDeck_Index()].GetBlock_List()[m_iCurrent_Block_Index].GetBuilding_List().Clear();
         }
-        int z = 0;
-       for(int i=0;i< m_iGrid_Size;i++)
+
+        StartCoroutine(Save_PopUp());
+    }
+
+    IEnumerator Save_PopUp()
+    {
+        m_objSave_PopUp.SetActive(true);
+
+        yield return new WaitForSeconds(0.7f);
+
+        m_objSave_PopUp.SetActive(false);
+    }
+
+    public void Button_Initialization()
+    {
+        m_dicUse_Building[(Sc_Engine.Building_Kind)m_iCurrent_Block_Index].Clear();
+
+        for(int i=0;i<m_readiGrid_Size;i++)
         {
-            for(int j=0;j< m_iGrid_Size;j++)
+            for(int j=0;j<m_readiGrid_Size;j++)
             {
-                 if (m_stBlock_Grid[i,j].eBlock_Grid_State == Block_Grid_State.eUse)
-                {
-                    currentDeck.GetBlock_List()[m_iSelect_Block].GetBuilding_List().Add(m_listUse_Building[z]);
-                    z++;
-                }
+                m_starrGrid[i, j].eBlock_Grid_State = Block_Grid_State.eBan;
             }
         }
-
-        currentDeck.GetBlock_List()[m_iSelect_Block].SetParent_Deck(currentDeck);
+        Grid_Check();
+        Refresh_Label();
     }
 
-    //건물 리스트
-    private void Change_Sprite(Transform _tr, string _name)
+    private void Refresh_Label()
     {
-        UISprite spr = _tr.GetChild(0).GetChild(0).GetChild(0).GetComponent<UISprite>();
-        spr.atlas = m_ObjectAtlas;
-        spr.spriteName = _name;
-    }
-    private void Change_Name(Transform _tr, string _name)
-    {
-        UILabel label = _tr.GetChild(0).GetChild(1).GetComponent<UILabel>();
-        label.text = _name;
-    }
-    private void Change_AbilityText(Transform _tr, string _text)
-    {
-        UILabel label = _tr.GetChild(0).GetChild(2).GetComponent<UILabel>();
-        label.text = _text;
-    }
-    private void Change_Number(Transform _tr, int _num)
-    {
-        UILabel label = _tr.GetChild(0).GetChild(3).GetComponent<UILabel>();
-        label.text = string.Format("X{0}", _num);
-    }
-
-    private void Change_Background_Color()
-    { 
-        for(int i=0;i<m_listBuilding.Count;i++)
+        for (int i = 0; i < m_dicHave_Building.Count; i++)
         {
-            if(i == m_iCurrent_Select_Building)
-            {
-                m_listButton_Background[i].color = m_Select_Color;
-            }
-            else
-            {
-                m_listButton_Background[i].color = m_Origin_Color;
-            }
+            Sc_Engine.GetInstance.Change_Label(m_trarrBuilding_Count_List[i], string.Format("x{0}", m_dicHave_Building[(Sc_Engine.Building_Kind)i].Count - m_dicUse_Building[(Sc_Engine.Building_Kind)i].Count));
         }
+        
+            Sc_Engine.GetInstance.Change_Label(m_trMaxCount, string.Format("Max Count : {0}", m_iEnable_Build_Count - m_dicUse_Building[(Sc_Engine.Building_Kind)m_iCurrent_Block_Index].Count));
     }
-
-    public void Select_Building(GameObject _list)
-    {
-        m_iCurrent_Select_Building = int.Parse(_list.name[14].ToString());
-
-        Change_Background_Color();
-        Change_Building();
-    }
-
-    
 }
