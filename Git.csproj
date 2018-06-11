@@ -79,6 +79,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\02.Script\Cannon\CreateFile.cs" />
     <Compile Include="Assets\02.Script\Cannon\EnemyAI.cs" />
     <Compile Include="Assets\02.Script\Cannon\TestGrid.cs" />
     <Compile Include="Assets\02.Script\Cannon\TestTileState.cs" />
@@ -280,6 +281,7 @@
     <None Include="Assets\Kms_Folder\08.Tool\NGUI\Resources\Shaders\Unlit - Transparent Packed 2.shader" />
     <None Include="Assets\Kms_Folder\08.Tool\NGUI\Resources\Shaders\Unlit - Transparent Packed 3.shader" />
     <None Include="Assets\Kms_Folder\08.Tool\NGUI\Resources\Shaders\Unlit - Transparent Packed.shader" />
+    <None Include="Assets\Resources\FireData.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

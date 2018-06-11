@@ -3,122 +3,131 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyAI : MonoBehaviour {
-    public enum eAI_STATE
-    {
-        AI_EASY, AI_NORMAL, AI_HARD, AI_END
-    }
-    public eAI_STATE state;
-    public GameObject CannonHead;
-    public GameObject bullet;
-    public BulletMove scBulletMove;
-    public GameObject createPoint;
-    public GameObject preBullet;
-    //상하좌우 각도, 파워
-    public float setaX;
-    public float setaY;
-    public float seta;
-    public int power;
-    
-    private void Awake()
-    {
-        //포대 기본셋팅
-        CannonHead = this.transform.Find("CannonHead").gameObject;
-        createPoint = CannonHead.transform.Find("CreateBullet").gameObject;
-        state = eAI_STATE.AI_EASY;
-        seta = 2;
-        setaX = -20;
-        setaY = -110;
-        power = 1000;
+    //각도에 영향 받는 헤드
+    GameObject cannonHead;
+    GameObject createBulletPos;
+    //총알
+    GameObject bullet;
+    BulletMove bulletMove;
 
-        CannonHead.transform.rotation = Quaternion.Euler(setaX, setaY, 0);
+    float setaX;
+    float setaY;
+    public int cannonPower;
+    //x축 회전 --상하-- 제일아래 -20 제일위 -50 ---- setaY
+    //y축 회전 --좌우-- 왼쪽끝 -110 오른쪽끝 -70 ---setaX
+    int leftSetaX = 110;
+    int rightSetaX = 70;
+    int downSetaY = 20;
+    int upSetaY = 50;
+    public float delayTime = 0.1f;  //장전속도
 
-        //총알 기본셋
+    public void Awake()
+    {
+        cannonHead = this.transform.Find("CannonHead").gameObject;
+        createBulletPos = cannonHead.transform.Find("CreateBullet").gameObject;
         bullet = Resources.Load<GameObject>("Prefab/Bullet");
-        scBulletMove = bullet.GetComponent<BulletMove>();
-    }
-    public int testCount = 0;
-    private void FixedUpdate()
-    {
+        bulletMove = bullet.GetComponent<BulletMove>();
       
-        StartCoroutine("AI_Start");
-       
-    }
-    public IEnumerator AI_Start()
-    {
-       while(testCount <100)
+        setaX = 70;
+        setaY = 20;
+        cannonPower = 50;
+
+        //초기위치값 엇나간거 잡아주기
         {
-            if (preBullet == null)
-                myCreate_Bullet();
-
-            //총알 생성되고 사라질때까지 기다린다.
-            yield return new WaitUntil(() => preBullet == null);
-
-            if (-50 < setaX && setaX <= -20)
-            {
-                myUp_XAxis();
-            }
-            else if(setaX <= -50)
-            {
-                myInit_SetaX();
-                if(-110 <= setaY && setaY <-70)
-                {
-                    myRight_YAxis();
-                }
-                else if(setaY >= -70)
-                {
-                    myInit_SetaY();
-                }
-            }
-           
+            Vector3 pos = cannonHead.transform.position;
+            pos.z = 0;
+            cannonHead.transform.position = pos;
         }
-       
-      
+
+        cannonHead.transform.eulerAngles = Vector3.up * -setaX + Vector3.right * (-setaY);
     }
 
-    //총알 생성
-    public void myCreate_Bullet()
+    public void PlusSetaX()
     {
-        scBulletMove.createBulletPoint = createPoint;
-        scBulletMove.pow = power;
-        preBullet = Instantiate(bullet, scBulletMove.createBulletPoint.transform);
-        
+        setaX++;
     }
-    //X축을 기준으로 움직인다. -는 위로 +는 아래로
-    public void myUp_XAxis()
+    public void SetSetaX(float _setaX)
     {
-        setaX -= seta;
-        Debug.Log(setaX.ToString());
-        CannonHead.transform.rotation = Quaternion.Euler(setaX, setaY, 0);
-    }
-    public void myDown_XAxis()
-    {
-        setaX += seta;
-        CannonHead.transform.rotation = Quaternion.Euler(setaX, setaY, 0);
-    }
-    public void myInit_SetaX()
-    {
-        setaX = -20;
-        CannonHead.transform.rotation = Quaternion.Euler(setaX, setaY, 0);
+        setaX = _setaX;
     }
 
-    //Y축을 기분으로 움직인다                         
-    public void myRight_YAxis() {
-        setaY += seta;
-        CannonHead.transform.rotation = Quaternion.Euler(setaX, setaY, 0);
-    }
-    public void myLeft_YAxis()
+    public void PlusSetaY()
     {
-        setaY -= seta;
-        CannonHead.transform.rotation = Quaternion.Euler(setaX, setaY, 0);
+        setaY++;
     }
-    public void myInit_SetaY()
+
+    public void SetSetaY(float _setaY)
     {
-        setaY = -110;
-        CannonHead.transform.rotation = Quaternion.Euler(setaX, setaY, 0);
-    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
-    //power
-    public void myInit_Power() { power = 1000; }
-    public void myPlus_Power() { power += 100; }
-    public void myMinus_Power() { power -= 100; }
-   
+        setaY = _setaY;
+    }
+
+    public void PlusPower()
+    {
+        cannonPower++;
+    }
+    public void SetPower(int _power)
+    {
+        cannonPower = _power;
+    }
+    public static float Radius_To_Seta(float _Seta)
+    {
+        float temp;
+
+        temp = _Seta * (3.14f / 180);
+        return temp;
+    }
+
+    public void Create_Bullet()
+    {
+        bulletMove.x = Radius_To_Seta(setaX);
+        bulletMove.y = Radius_To_Seta(setaY);
+        bulletMove.forward = cannonHead.transform.forward;
+        bulletMove.power = (int)Mathf.Pow(cannonPower,2);
+
+        bulletMove.startPower = (int)Mathf.Pow(cannonPower, 2);
+        bulletMove.startSetaX = setaX;
+        bulletMove.startSetaY = setaY;
+
+        GameObject preBullet = Instantiate(bullet, createBulletPos.transform);
+    }
+    float time = 0;
+    public void FixedUpdate()
+    {
+        time += Time.deltaTime;
+
+        if(time <delayTime)
+        {
+
+        }
+        else
+        {
+            AddSeta();
+            Create_Bullet();
+            time = 0;
+        }
+    }
+
+    public void AddSeta()
+    {
+        if (setaY <= upSetaY)
+        {
+            //y각도를 올린다.
+            PlusSetaY();
+        }
+        else
+        {
+            if(setaX <= leftSetaX)
+            {
+                PlusSetaX();
+                SetSetaY(20);
+            }
+            else
+            {
+                PlusPower();
+                SetSetaX(70);
+            }
+        }
+        cannonHead.transform.eulerAngles = Vector3.up * -setaX + Vector3.right * (-setaY);
+    }
 }
+

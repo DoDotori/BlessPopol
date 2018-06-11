@@ -38,6 +38,7 @@ public class Sc_GridManager : MonoBehaviour {
 
 	void Awake () {
         m_dicGrid = new Dictionary<POINT, GameObject>();
+        m_objCannon = Resources.Load<GameObject>("Prefab/Cannon");
         m_trGrid_Parent = this.transform;
         int size = 11;
         POINT grid_size;
@@ -61,7 +62,7 @@ public class Sc_GridManager : MonoBehaviour {
         enemy_cannon.y = 9;
         enemy_tile_start.x = 19;
         enemy_tile_start.y = 3;
-
+        int number = 0;
         for (int i=0;i< grid_size.y; i++)
         {
             for(int j=0;j< grid_size.x; j++)
@@ -72,7 +73,7 @@ public class Sc_GridManager : MonoBehaviour {
                 pt.y = i;
                 grid.transform.position = new Vector3(-170 + j * 10, 0, 90 - i * 10);
                 grid.name = string.Format("Grid_{0}_{1}", i, j);
-
+                grid.AddComponent<TestTileState>();
                 if (i == player_character.y && j == player_character.x)
                 {
                     GameObject character = Instantiate(m_objCharacter,m_trUser_Base);
@@ -83,11 +84,17 @@ public class Sc_GridManager : MonoBehaviour {
                 {
                     GameObject cannon = Instantiate(m_objCannon, m_trUser_Base);
                     cannon.transform.position = grid.transform.position;
+                    cannon.transform.rotation = Quaternion.Euler(Vector3.up * 90);
+                    cannon.AddComponent<TestCannonControl>();
                     grid.GetComponent<Sc_Grid>().SetState(Grid_State.eUser_Cannon, pt);
                 }
                 else if((i > player_tile_start.y && i <= player_tile_start.y+size) && (j > player_tile_start.x && j <= player_tile_start.x+size))
                 {
                     grid.GetComponent<Sc_Grid>().SetState(Grid_State.eUser_Tile, pt);
+                    grid.GetComponent<TestTileState>().num = number++;
+                    grid.tag = "TestTile";
+                    //속성에 따른 컬러변경 테스트 함수
+                    TestTileSetting(grid);
                 }
                 else if (i == enemy_character.y && j == enemy_character.x)
                 {
@@ -100,7 +107,6 @@ public class Sc_GridManager : MonoBehaviour {
                 {
                     GameObject cannon = Instantiate(m_objCannon, m_trEnemy_Base);
                     cannon.transform.position = grid.transform.position;
-                    cannon.transform.rotation = Quaternion.Euler(Vector3.up * -90);
                     grid.GetComponent<Sc_Grid>().SetState(Grid_State.eEnemy_Cannon, pt);
                     cannon.AddComponent<EnemyAI>();
                 }
@@ -118,6 +124,35 @@ public class Sc_GridManager : MonoBehaviour {
             }
         }
 	}
+
+    public void TestTileSetting(GameObject _grid)
+    {
+        int r = Random.Range(0, 7);
+        switch (r)
+        {
+            case 0:
+                _grid.GetComponent<TestTileState>().state = Sc_Engine.Building_Kind.eNormal;
+                break;
+            case 1:
+                _grid.GetComponent<TestTileState>().state = Sc_Engine.Building_Kind.eAttack_Speed;
+                break;
+            case 2:
+                _grid.GetComponent<TestTileState>().state = Sc_Engine.Building_Kind.eBonus;
+                break;
+            case 3:
+                _grid.GetComponent<TestTileState>().state = Sc_Engine.Building_Kind.eCorrection;
+                break;
+            case 4:
+                _grid.GetComponent<TestTileState>().state = Sc_Engine.Building_Kind.eGauge_Speed;
+                break;
+            case 5:
+                _grid.GetComponent<TestTileState>().state = Sc_Engine.Building_Kind.eHeadquarters;
+                break;
+            case 6:
+                _grid.GetComponent<TestTileState>().state = Sc_Engine.Building_Kind.eRange;
+                break;
+        }
+    }
 
 	void Update () {
 		

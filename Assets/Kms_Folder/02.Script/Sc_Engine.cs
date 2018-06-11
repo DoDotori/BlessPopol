@@ -58,6 +58,6 @@ public class Sc_Engine : MonoBehaviour {
         }
     }
 
-    public enum Building_Kind { eNull, eHeadquarters,eAttack_Speed, eGauge_Speed, eRange, eCorrection, eBonus, eSkill1, eSkill2 }
+    public enum Building_Kind { eNull, eNormal, eHeadquarters,eAttack_Speed, eGauge_Speed, eRange, eCorrection, eBonus, eSkill1, eSkill2 }
 
 }
