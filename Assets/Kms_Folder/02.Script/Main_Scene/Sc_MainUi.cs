@@ -9,6 +9,8 @@ public class Sc_MainUi : MonoBehaviour {
     public GameObject m_objBlock_Edit_Board;
     public GameObject m_objState_Board;
 
+    
+
     public void Deck_Edit_Window_Open()
     {
         m_objDeck_Edit_Window.SetActive(true);

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Sc_Engine : MonoBehaviour {
-    //private static Sc_Engine m_Instance;
+    private static Sc_Engine m_Instance;
 
-    /*public static Sc_Engine GetInstance
+    public static Sc_Engine GetInstance
     {
         get
         {
@@ -22,42 +22,45 @@ public class Sc_Engine : MonoBehaviour {
             }
             return m_Instance;
         }
-    }*/
+    }
 	
     public struct POINT
     {
-        private int x;
-        private int y;
-
-        public void SetPoint(int _x,int _y)
-        {
-            if ((_x < 0 || _x > 4) && (_y < 0 || _y > 4))
-            {
-                Debug.LogError("입력한 값이 허용범위를 넘었습니다. (0~4)");
-                Debug.LogError("입력한 x의 값" + _x + "입력한 y의 값 " + _y);
-            }
-            else
-            {
-                x = _x;
-                y = _y;
-            }
-        }
-        public int GetPoint_X()
-        { return x; }
-
-        public int GetPoint_Y()
-        { return y; }
-
-        public POINT GetPoint()
-        {
-            POINT pt;
-            pt.x = x;
-            pt.y = y;
-
-            return pt;
-        }
+        public int x;
+        public int y;
     }
 
+    public enum Building_Kind { eAttack_Speed, eGauge_Speed, eCorrection, eBullet_Speed ,eSkill1, eHeadquarters, eNull }
+    public enum Rank { eBronze5, eBronze4, eBronze3, eBronze2, eBronze1, eSilver5, eSilver4, eSilver3, eSilver2, eSilver1, eGold5, eGold4, eGold3, eGold2, eGold1, ePlatinum5,
+        ePlatinum4, ePlatinum3, ePlatinum2, ePlatinum1, eDiamond5, eDiamond4, eDiamond3, eDiamond2, eDiamond1, eMaster5, eMaster4, eMaster3, eMaster2, eMaster1, eGrandMaster5,
+        eGrandMaster4, eGrandMaster3, eGrandMaster2, eGrandMaster1 }
+
+    public void Change_Sprite(UIAtlas _atlas, Transform _tr, string _spriteName)
+    {
+        UISprite sprite = _tr.GetComponent<UISprite>();
+        sprite.atlas = _atlas;
+        sprite.spriteName = _spriteName;
+    }
+    public void Change_Sprite(UISprite _sprite, UIAtlas _atlas, Color _color, string _spriteName)
+    {
+        _sprite.atlas = _atlas;
+        _sprite.spriteName = _spriteName;
+        _sprite.color = _color;
+    }
+    public void Change_Color(UISprite _sprite, Color _color)
+    {
+        _sprite.color = _color;
+    }
+
+<<<<<<< HEAD
     public enum Building_Kind { eNull, eNormal, eHeadquarters,eAttack_Speed, eGauge_Speed, eRange, eCorrection, eBonus, eSkill1, eSkill2 }
 
+=======
+    public void Change_Label(Transform _tr, string _text)
+    {
+        UILabel label = _tr.GetComponent<UILabel>();
+        label.text = _text;
+    }
+   
+>>>>>>> KMS
 }

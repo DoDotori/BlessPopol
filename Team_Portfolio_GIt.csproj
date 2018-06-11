@@ -79,29 +79,30 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Cannon\BulletMove.cs" />
     <Compile Include="Assets\Cannon\CreateBullet.cs" />
     <Compile Include="Assets\Cannon\TestCannonControl.cs" />
+    <Compile Include="Assets\Kms_Folder\02.Script\Building\Sc_Building_Bishop.cs" />
+    <Compile Include="Assets\Kms_Folder\02.Script\Building\Sc_Building_King.cs" />
+    <Compile Include="Assets\Kms_Folder\02.Script\Building\Sc_Building_Knight.cs" />
+    <Compile Include="Assets\Kms_Folder\02.Script\Building\Sc_Building_Pawn.cs" />
+    <Compile Include="Assets\Kms_Folder\02.Script\Building\Sc_Building_Queen.cs" />
+    <Compile Include="Assets\Kms_Folder\02.Script\Building\Sc_Building_Rook.cs" />
+    <Compile Include="Assets\Kms_Folder\02.Script\Building\Sc_BuildingManager.cs" />
     <Compile Include="Assets\Kms_Folder\02.Script\Game_Scene\Sc_Camera_Action.cs" />
     <Compile Include="Assets\Kms_Folder\02.Script\Game_Scene\Sc_Grid.cs" />
     <Compile Include="Assets\Kms_Folder\02.Script\Game_Scene\Sc_GridManager.cs" />
     <Compile Include="Assets\Kms_Folder\02.Script\Main_Scene\Sc_BlockEdit.cs" />
-    <Compile Include="Assets\Kms_Folder\02.Script\Main_Scene\Sc_BlockEdit1.cs" />
     <Compile Include="Assets\Kms_Folder\02.Script\Main_Scene\Sc_DeckEdit.cs" />
     <Compile Include="Assets\Kms_Folder\02.Script\Main_Scene\Sc_MainSceneManager.cs" />
     <Compile Include="Assets\Kms_Folder\02.Script\Main_Scene\Sc_MainUi.cs" />
     <Compile Include="Assets\Kms_Folder\02.Script\Sc_Block.cs" />
     <Compile Include="Assets\Kms_Folder\02.Script\Sc_Building.cs" />
-    <Compile Include="Assets\Kms_Folder\02.Script\Sc_Building_BlueTent.cs" />
-    <Compile Include="Assets\Kms_Folder\02.Script\Sc_Building_Headquarters.cs" />
-    <Compile Include="Assets\Kms_Folder\02.Script\Sc_Building_PurpleTent.cs" />
-    <Compile Include="Assets\Kms_Folder\02.Script\Sc_Building_RedTent.cs" />
-    <Compile Include="Assets\Kms_Folder\02.Script\Sc_Building_SkillTower1.cs" />
-    <Compile Include="Assets\Kms_Folder\02.Script\Sc_BuildingManager.cs" />
     <Compile Include="Assets\Kms_Folder\02.Script\Sc_Deck.cs" />
     <Compile Include="Assets\Kms_Folder\02.Script\Sc_Engine.cs" />
+    <Compile Include="Assets\Kms_Folder\02.Script\Sc_Loading_Scene.cs" />
     <Compile Include="Assets\Kms_Folder\02.Script\Sc_Player_Info.cs" />
-    <Compile Include="Assets\Kms_Folder\02.Script\Sc_SceneManager.cs" />
+    <Compile Include="Assets\Kms_Folder\02.Script\Test\BulletMove.cs" />
+    <Compile Include="Assets\Kms_Folder\02.Script\Test\TestCannonControl1.cs" />
     <Compile Include="Assets\Kms_Folder\08.Tool\NGUI\Examples\Scripts\InventorySystem\Game\EquipItems.cs" />
     <Compile Include="Assets\Kms_Folder\08.Tool\NGUI\Examples\Scripts\InventorySystem\Game\EquipRandomItem.cs" />
     <Compile Include="Assets\Kms_Folder\08.Tool\NGUI\Examples\Scripts\InventorySystem\Game\UICursor.cs" />

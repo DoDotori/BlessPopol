@@ -20,16 +20,16 @@ public class Sc_DeckEdit : MonoBehaviour {
             m_trList_Grid.GetChild(i).GetChild(0).GetComponent<UILabel>().text = Sc_Player_Info.GetInstance.GetHave_Deck()[i].GetDeck_Name();
         }
 
-        m_trExplain.GetChild(1).GetChild(0).GetComponent<UILabel>().text = Sc_Player_Info.GetInstance.GetCurrentDeck().GetDeck_Name();
+        m_trExplain.GetChild(1).GetChild(0).GetComponent<UILabel>().text = Sc_Player_Info.GetInstance.GetHave_Deck()[Sc_Player_Info.GetInstance.GetCurrentDeck_Index()].GetDeck_Name();
     }
 
-    public void Select_Deck(UILabel _label)
+    public void Select_Deck(GameObject _object)
     {
-        m_iSelect_Deck_Num = int.Parse(_label.text[4].ToString());
-        m_trExplain.GetChild(1).GetChild(0).GetComponent<UILabel>().text = _label.text;
+        m_iSelect_Deck_Num = int.Parse(_object.name[6].ToString());
+        m_trExplain.GetChild(1).GetChild(0).GetComponent<UILabel>().text = Sc_Player_Info.GetInstance.GetHave_Deck()[m_iSelect_Deck_Num].GetDeck_Name();
     }
     public void Deck_Active()
     {
-        Sc_Player_Info.GetInstance.SetCurrentDeck(m_iSelect_Deck_Num);
+        Sc_Player_Info.GetInstance.SetCurrentDeck_Index(m_iSelect_Deck_Num);
     }
 }
